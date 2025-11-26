@@ -5,14 +5,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.*;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Pattern;
-
-
+import lombok.Data;
 
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "promo_codes")
+@Data
 public class PromoCode {
 
     @Id
@@ -41,7 +41,7 @@ public class PromoCode {
 
 
     @OneToOne
-    @JoinColumn(name = "used_in_order_id")
+    @JoinColumn(name = "used_in_order_id" , nullable = true)
     private Commande usedInOrder;
 
 }

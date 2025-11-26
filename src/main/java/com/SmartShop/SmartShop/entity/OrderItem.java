@@ -9,6 +9,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "order_items")
+@Data
 public class OrderItem {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +21,15 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product produit;
+    private Product product;
 
     private Integer quantite;
 
     private Double prixUnitaire;
 
     private Double totalLigne;
+
+
+
+
 }

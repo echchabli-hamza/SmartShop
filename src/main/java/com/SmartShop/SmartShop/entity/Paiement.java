@@ -7,10 +7,12 @@ import com.SmartShop.SmartShop.entity.enums.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 import java.time.LocalDate;
+
+
 @Entity
 @Table(name = "paiements")
+@Data
 public class Paiement {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

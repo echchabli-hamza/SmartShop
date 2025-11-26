@@ -15,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "commandes")
+@Data
 public class Commande {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +39,9 @@ public class Commande {
     private Double montantRestant;
 
 
-    private String promoCode;
+    @OneToOne
+    @JoinColumn(name = "promo_code_id", nullable = true)
+    private PromoCode promoCode;
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
     private List<OrderItem> items;

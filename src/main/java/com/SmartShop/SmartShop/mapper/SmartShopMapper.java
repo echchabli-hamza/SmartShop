@@ -27,9 +27,10 @@ public interface SmartShopMapper {
     Product toProduct(ProductDTO dto);
 
 
-    @Mapping(source = "produit.id", target = "produitId")
-    @Mapping(source = "produit.nom", target = "produitNom")
+    @Mapping(source = "product.id", target = "productId")
+    @Mapping(source = "product.nom", target = "produitNom")
     OrderItemDTO toOrderItemDTO(OrderItem item);
+
 
     OrderItem toOrderItem(OrderItemDTO dto);
 
