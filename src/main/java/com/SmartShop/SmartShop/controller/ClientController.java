@@ -10,7 +10,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/api/admin/clients")
 public class ClientController {
 
     private final ClientService clientService;
@@ -22,29 +22,29 @@ public class ClientController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ClientDTO> registerClient(@RequestBody RegisterDto registerDto  , HttpSession session) {
-        authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+    public ResponseEntity<ClientDTO> registerClient(@RequestBody RegisterDto registerDto  ) {
+
         ClientDTO clientDTO = clientService.createClient(registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(clientDTO);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public ResponseEntity<ClientDTO> getClient(@PathVariable Long id ,  HttpSession session) {
-        authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+
         ClientDTO clientDTO = clientService.getClientById(id);
         return ResponseEntity.ok(clientDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientDTO ,  HttpSession session) {
-        authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+    public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
+      //  authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
         ClientDTO updatedClient = clientService.updateClient(id, clientDTO);
         return ResponseEntity.ok(updatedClient);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long id , HttpSession session) {
-        authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
+       // authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
         clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }
