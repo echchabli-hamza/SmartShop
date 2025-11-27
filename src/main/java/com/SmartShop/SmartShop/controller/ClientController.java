@@ -3,7 +3,7 @@ package com.SmartShop.SmartShop.controller;
 
 import com.SmartShop.SmartShop.dto.*;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
-import com.SmartShop.SmartShop.helper.AuthHelper;
+
 import com.SmartShop.SmartShop.service.ClientService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.*;
@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.*;
 public class ClientController {
 
     private final ClientService clientService;
-    private final AuthHelper authHelper ;
 
-    public ClientController(ClientService clientService, AuthHelper authHelper) {
+    public ClientController(ClientService clientService) {
         this.clientService = clientService;
-        this.authHelper = authHelper;
+
     }
 
     @PostMapping("/register")
