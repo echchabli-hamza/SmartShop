@@ -51,14 +51,14 @@ public class ClientService  {
             throw new RuntimeException("Email already exists");
         }
 
-        // Création du User
+
         User user = new User();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setRole(UserRole.CLIENT);
         User savedUser = userRepository.save(user);
 
-        // Création du Client lié
+
         Client client = new Client();
         client.setNom(registerDto.getNom());
         client.setEmail(registerDto.getEmail());

@@ -44,7 +44,7 @@ public class Commande {
     @JoinColumn(name = "promo_code_id", nullable = true)
     private PromoCode promoCode;
 
-    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)

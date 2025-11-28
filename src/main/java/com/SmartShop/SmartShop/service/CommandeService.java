@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,9 +90,20 @@ public class CommandeService {
         Commande commande = commandeRepository.findById(commandeId)
                 .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
 
+        if (commande.getMontantRestant()!=0 ){
+            throw new RuntimeException("paiement not finished yet");
+        }
+        if (commande.getStatus().equals(OrderStatus.CANCELED)){
+            throw new RuntimeException("commande already canceled");
+        }
+
         commande.setStatus(OrderStatus.CONFIRMED);
 
 
+        Client c =  commande.getClient();
+        c.setLastOrderDate(LocalDate.now());
+        c.setTotalOrders(c.getTotalOrders() + 1);
+        c.setTotalSpent(c.getTotalSpent()+commande.getTotal());
 
 
         return mapper.toCommandeDTO(commandeRepository.save(commande));
@@ -99,24 +111,29 @@ public class CommandeService {
 
     @Transactional
     public CommandeDTO cancelCommande(Long commandeId) {
+
         Commande commande = commandeRepository.findById(commandeId)
                 .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
 
-        commande.setStatus(OrderStatus.CANCELED);
-        commandeRepository.save(commande);
+        OrderStatus oldStatus = commande.getStatus();
 
-        if(commande.getStatus().equals(OrderStatus.RESERVED)) {
-
+        if (oldStatus == OrderStatus.RESERVED) {
             for (OrderItem item : commande.getItems()) {
                 Product product = item.getProduct();
                 product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
                 productRepository.save(product);
-
             }
         }
-         commande.setItems(null);
+
+
+            commande.getItems().clear();
+
+
+
+        commande.setStatus(OrderStatus.CANCELED);
         commandeRepository.save(commande);
-        return   mapper.toCommandeDTO(commande);
+
+        return mapper.toCommandeDTO(commande);
     }
 
     public CommandeDTO getCommandeById(Long commandeId) {
