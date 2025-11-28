@@ -93,23 +93,30 @@ public class CommandeService {
 
 
 
+
         return mapper.toCommandeDTO(commandeRepository.save(commande));
     }
 
     @Transactional
-    public void cancelCommande(Long commandeId) {
+    public CommandeDTO cancelCommande(Long commandeId) {
         Commande commande = commandeRepository.findById(commandeId)
                 .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
 
         commande.setStatus(OrderStatus.CANCELED);
         commandeRepository.save(commande);
 
+        if(commande.getStatus().equals(OrderStatus.RESERVED)) {
 
-        for (OrderItem item : commande.getItems()) {
-            Product product = item.getProduct();
-            product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
-            productRepository.save(product);
+            for (OrderItem item : commande.getItems()) {
+                Product product = item.getProduct();
+                product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
+                productRepository.save(product);
+
+            }
         }
+         commande.setItems(null);
+        commandeRepository.save(commande);
+        return   mapper.toCommandeDTO(commande);
     }
 
     public CommandeDTO getCommandeById(Long commandeId) {

@@ -73,6 +73,15 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
 
+        if (path.startsWith("/api/commandes")) {
+            if (user.getRole() != UserRole.ADMIN) {
+                sendError(response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: admin only");
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
 
 
