@@ -10,6 +10,7 @@ import lombok.*;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,7 +34,7 @@ public class Commande {
     private Double total;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus statut;
+    private OrderStatus status;
 
 
     private Double montantRestant;
@@ -44,8 +45,8 @@ public class Commande {
     private PromoCode promoCode;
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
-    private List<OrderItem> items;
+    private List<OrderItem> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
-    private List<Paiement> paiements;
+    private List<Paiement> paiements= new ArrayList<>();
 }

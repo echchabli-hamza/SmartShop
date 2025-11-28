@@ -30,6 +30,51 @@ public class OrderItem {
     private Double totalLigne;
 
 
+    public Commande getCommande() {
+        return commande;
+    }
 
+    public void setCommande(Commande commande) {
+        this.commande = commande;
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Double getPrixUnitaire() {
+        return prixUnitaire;
+    }
+
+    public void setPrixUnitaire(Double prixUnitaire) {
+        this.prixUnitaire = prixUnitaire;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Integer getQuantite() {
+        return quantite;
+    }
+
+    public void setQuantite(Integer quantite) {
+        this.quantite = quantite;
+    }
+
+    public Double getTotalLigne() {
+        return totalLigne;
+    }
+
+    public void setTotalLigne(Double totalLigne) {
+        this.totalLigne = totalLigne;
+    }
 }

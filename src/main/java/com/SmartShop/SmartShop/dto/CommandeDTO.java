@@ -14,7 +14,7 @@ import java.util.List;
 public class CommandeDTO {
     private Long id;
     private Long clientId;
-    private String statut; // PENDING / CONFIRMED / CANCELED / REJECTED
+    private String status; // PENDING / CONFIRMED / CANCELED / REJECTED
     private LocalDateTime date;
     private Double sousTotal;
     private Double remise;

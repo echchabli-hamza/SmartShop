@@ -7,7 +7,7 @@ import com.SmartShop.SmartShop.entity.Product;
 import com.SmartShop.SmartShop.mapper.SmartShopMapper;
 import com.SmartShop.SmartShop.repository.OrderItemRepository;
 import com.SmartShop.SmartShop.repository.ProductRepository;
-import com.SmartShop.SmartShop.service.ProductService;
+
 
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
