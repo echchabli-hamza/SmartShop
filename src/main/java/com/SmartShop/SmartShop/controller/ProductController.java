@@ -40,9 +40,13 @@ public class ProductController {
 
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getProducts(Pageable page) {
+    public ResponseEntity<Page<ProductDTO>> getProducts(
+            @RequestParam(required = false) String nom,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Integer q,
+            Pageable page) {
 
-        Page<ProductDTO> result = productService.getProducts(page);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(productService.getProducts(nom, minPrice,  q,page));
     }
+
 }

@@ -4,12 +4,14 @@ package com.SmartShop.SmartShop.service;
 
 import com.SmartShop.SmartShop.dto.ProductDTO;
 import com.SmartShop.SmartShop.entity.Product;
+import com.SmartShop.SmartShop.helper.ProductSpecs;
 import com.SmartShop.SmartShop.mapper.SmartShopMapper;
 import com.SmartShop.SmartShop.repository.OrderItemRepository;
 import com.SmartShop.SmartShop.repository.ProductRepository;
 
 
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -65,12 +67,14 @@ public class ProductService {
     }
 
 
-    public Page<ProductDTO> getProducts(Pageable p) {
+    public Page<ProductDTO> getProducts(String nom, Double minPrice , Integer q, Pageable p) {
+        Specification<Product> spec = Specification
+                .where(ProductSpecs.hasMinQuantity(q))
+                .and(ProductSpecs.hasName(nom))
+                .and(ProductSpecs.minPrice(minPrice));
 
-
-
-        Page<Product> pageResult = productRepository.findAll(p);
-
-        return pageResult.map(mapper::toProductDTO);
+        return productRepository.findAll(spec, p)
+                .map(mapper::toProductDTO);
     }
+
 }
