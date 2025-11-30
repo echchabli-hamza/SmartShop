@@ -13,6 +13,7 @@ import com.SmartShop.SmartShop.repository.ClientRepository;
 import com.SmartShop.SmartShop.repository.CommandeRepository;
 import com.SmartShop.SmartShop.repository.ProductRepository;
 import com.SmartShop.SmartShop.service.helper.RetreiveDiscount;
+import com.SmartShop.SmartShop.service.helper.UpdateC;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class CommandeService {
     private final ClientRepository clientRepository;
     private final SmartShopMapper mapper;
     private final RetreiveDiscount retreiveDiscount;
+
 
     @Transactional
     public CommandeDTO createCommande(CommandeCreateRequest request) {
@@ -96,15 +98,32 @@ public class CommandeService {
         if (commande.getStatus().equals(OrderStatus.CANCELED)){
             throw new RuntimeException("commande already canceled");
         }
+        for (OrderItem item : commande.getItems()) {
+            Product product = item.getProduct();
 
-        commande.setStatus(OrderStatus.CONFIRMED);
+            if (product.getStockDisponible() < item.getQuantite()) {
+                throw new RuntimeException(
+                        "Insufficient stock for product: " + product.getNom()
+                );
+            }
+        }
+
+
+        for (OrderItem item : commande.getItems()) {
+            Product product = item.getProduct();
+
+            product.setStockDisponible(product.getStockDisponible() - item.getQuantite());
+            productRepository.save(product);
+        }
+
+
 
 
         Client c =  commande.getClient();
-        c.setLastOrderDate(LocalDate.now());
-        c.setTotalOrders(c.getTotalOrders() + 1);
-        c.setTotalSpent(c.getTotalSpent()+commande.getTotal());
 
+        UpdateC.updateClientData(c , commande);
+
+        commande.setStatus(OrderStatus.CONFIRMED);
 
         return mapper.toCommandeDTO(commandeRepository.save(commande));
     }
@@ -116,14 +135,17 @@ public class CommandeService {
                 .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
 
         OrderStatus oldStatus = commande.getStatus();
-
-        if (oldStatus == OrderStatus.RESERVED) {
-            for (OrderItem item : commande.getItems()) {
-                Product product = item.getProduct();
-                product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
-                productRepository.save(product);
-            }
+        if (oldStatus == OrderStatus.CONFIRMED){
+           throw new RuntimeException("product is already confirmed");
         }
+
+//        if (oldStatus == OrderStatus.PENDING) {
+//            for (OrderItem item : commande.getItems()) {
+//                Product product = item.getProduct();
+//                product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
+//                productRepository.save(product);
+//            }
+//        }
 
 
             commande.getItems().clear();
@@ -153,4 +175,5 @@ public class CommandeService {
                 .map(mapper::toCommandeDTO)
                 .toList();
     }
+
 }
