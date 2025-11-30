@@ -57,6 +57,10 @@ public class CommandeService {
                 commande.setStatus(OrderStatus.REJECTED);
                 throw new RuntimeException("Insufficient stock for product: " + product.getNom());
             }
+            if ( product.isDeleted()) {
+                commande.setStatus(OrderStatus.REJECTED);
+                throw new RuntimeException("Product is Deleted: " + product.getNom());
+            }
 
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(product);
@@ -136,7 +140,7 @@ public class CommandeService {
 
         OrderStatus oldStatus = commande.getStatus();
         if (oldStatus == OrderStatus.CONFIRMED){
-           throw new RuntimeException("product is already confirmed");
+           throw new RuntimeException("command is already confirmed");
         }
 
 //        if (oldStatus == OrderStatus.PENDING) {
@@ -157,6 +161,33 @@ public class CommandeService {
 
         return mapper.toCommandeDTO(commande);
     }
+
+
+    public CommandeDTO rejeterCommande(Long commandeId){
+
+
+        Commande commande = commandeRepository.findById(commandeId)
+                .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
+
+        OrderStatus oldStatus = commande.getStatus();
+        if (oldStatus == OrderStatus.CONFIRMED){
+            throw new RuntimeException("command is already confirmed");
+        }
+
+        commande.getItems().clear();
+
+
+
+        commande.setStatus(OrderStatus.REJECTED);
+        commandeRepository.save(commande);
+
+        return mapper.toCommandeDTO(commande);
+
+    }
+
+
+
+
 
     public CommandeDTO getCommandeById(Long commandeId) {
         return commandeRepository.findById(commandeId)

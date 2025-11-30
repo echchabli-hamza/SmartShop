@@ -44,4 +44,11 @@ public class PromoCode {
     @JoinColumn(name = "used_in_order_id" , nullable = true)
     private Commande usedInOrder;
 
+    public boolean getAlreadyUsed() {
+        return alreadyUsed;
+    }
+
+    public boolean isAlreadyUsed() {
+        return alreadyUsed;
+    }
 }

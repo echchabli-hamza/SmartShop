@@ -55,7 +55,7 @@ public class ProductService {
         boolean usedInOrders = orderItemRepository.existsByProductId(id);
 
         if (usedInOrders) {
-            // soft delete
+
             product.setDeleted(true);
             productRepository.save(product);
         } else {

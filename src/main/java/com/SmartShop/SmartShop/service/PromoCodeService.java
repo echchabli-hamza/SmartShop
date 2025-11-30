@@ -37,8 +37,10 @@ public class PromoCodeService {
     @Transactional
     public PromoCode updatePromoCode(Long id, PromoCode updated) {
         PromoCode existing = getPromoCodeById(id);
+
         existing.setDiscountPercentage(updated.getDiscountPercentage());
         existing.setDateExpiration(updated.getDateExpiration());
+
         return promoCodeRepository.save(existing);
     }
 

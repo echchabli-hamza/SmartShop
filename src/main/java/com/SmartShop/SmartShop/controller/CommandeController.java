@@ -6,6 +6,7 @@ import com.SmartShop.SmartShop.dto.CommandeCreateRequest;
 import com.SmartShop.SmartShop.dto.CommandeDTO;
 import com.SmartShop.SmartShop.service.CommandeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +45,14 @@ public class CommandeController {
     @PutMapping("/{id}/cancel")
     public CommandeDTO deleteCommande(@PathVariable Long id) {
        return commandeService.cancelCommande(id);
+    }
+
+
+
+    @PutMapping("/{id}/rejeter")
+    public ResponseEntity<CommandeDTO> rejeterCommande(@PathVariable Long id) {
+        CommandeDTO res =  commandeService.rejeterCommande(id);
+        return ResponseEntity.ok(res);
     }
 }
 
