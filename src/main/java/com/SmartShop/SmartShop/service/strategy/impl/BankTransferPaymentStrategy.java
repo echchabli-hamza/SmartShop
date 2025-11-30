@@ -11,9 +11,24 @@ public class BankTransferPaymentStrategy implements PaymentStrategy {
 
     @Override
     public void addPayment(Paiement paiement) {
+
+
+
+
+
+        if (paiement.getBanque() == null || paiement.getBanque().isEmpty()) {
+            throw new RuntimeException("Bank information is required for a bank transfer");
+        }
+
+
+        if (paiement.getReference() == null || paiement.getReference().isEmpty()) {
+            throw new RuntimeException("Bank transfer reference is required");
+        }
+
         paiement.setStatut(PaymentStatus.EN_ATTENTE);
-        // Transfer-specific rules: bank, reference, date
+
     }
+
 
     @Override
     public void encaisserPayment(Paiement paiement) {

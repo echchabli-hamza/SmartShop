@@ -15,9 +15,9 @@ public class PaiementDTO {
     private Integer numeroPaiement;
     private Double montant;
     private String typePaiement;
+    private Integer commandeId ;
     private String statut;
     private String reference;
     private String banque;
-    private LocalDate datePaiement;
-    private LocalDate dateEncaissement;
+
 }

@@ -1,13 +1,21 @@
 package com.SmartShop.SmartShop.service;
 
+import com.SmartShop.SmartShop.dto.PaiementDTO;
+import com.SmartShop.SmartShop.entity.Commande;
 import com.SmartShop.SmartShop.entity.Paiement;
+import com.SmartShop.SmartShop.entity.enums.PaymentStatus;
 import com.SmartShop.SmartShop.entity.enums.PaymentType;
+import com.SmartShop.SmartShop.mapper.SmartShopMapper;
+import com.SmartShop.SmartShop.repository.CommandeRepository;
 import com.SmartShop.SmartShop.repository.PaiementRepository;
 import com.SmartShop.SmartShop.service.strategy.PaymentStrategy;
 import com.SmartShop.SmartShop.service.strategy.impl.PaymentStrategyFactory;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -15,29 +23,61 @@ public class PaymentService {
 
     private final PaiementRepository paiementRepository;
     private final PaymentStrategyFactory strategyFactory;
+    private final SmartShopMapper smartShopMapper ;
+    private  final CommandeRepository commandeRepository ;
 
     @Transactional
-    public Paiement addPayment(Paiement paiement) {
-        PaymentStrategy strategy = strategyFactory.getStrategy(paiement.getTypePaiement());
+    public PaiementDTO addPayment(PaiementDTO paiementDTO) {
+
+
+
+        Commande commande = commandeRepository.findById((long) paiementDTO.getCommandeId())
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+        if (paiementDTO.getMontant() > commande.getMontantRestant()) {
+            throw new IllegalArgumentException(
+                    "Le montant du paiement dépasse le montant restant à payer : " + commande.getMontantRestant()+ " MAD"
+            );
+        }
+
+          Paiement paiement = smartShopMapper.toPaiement(paiementDTO);
+        int nextPaymentNumber = commande.getPaiements().size() + 1;
+        paiement.setNumeroPaiement(nextPaymentNumber);
+
+        PaymentStrategy strategy = strategyFactory.getStrategy(PaymentType.valueOf(paiementDTO.getTypePaiement()));
         strategy.addPayment(paiement);
-        return paiementRepository.save(paiement);
+
+        paiement.setCommande(commande);
+       Paiement res =  paiementRepository.save(paiement);
+        return smartShopMapper.toPaiementDTO(res);
     }
 
     @Transactional
-    public Paiement encaisserPayment(Long paiementId) {
+    public PaiementDTO encaisserPayment(Long paiementId) {
         Paiement paiement = paiementRepository.findById(paiementId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
         PaymentStrategy strategy = strategyFactory.getStrategy(paiement.getTypePaiement());
         strategy.encaisserPayment(paiement);
-        return paiementRepository.save(paiement);
+        Commande cres = paiement.getCommande();
+        cres.setMontantRestant(cres.getMontantRestant()-paiement.getMontant());
+        commandeRepository.save(cres);
+        Paiement res =  paiementRepository.save(paiement);
+        return smartShopMapper.toPaiementDTO(res);
     }
 
     @Transactional
-    public Paiement rejectPayment(Long paiementId) {
+    public PaiementDTO rejectPayment(Long paiementId) {
         Paiement paiement = paiementRepository.findById(paiementId)
                 .orElseThrow(() -> new RuntimeException("Payment not found"));
+        if (paiement.getStatut().equals(PaymentStatus.ENCAISSE)){
+            throw new RuntimeException("Payment already confirmed");
+        }
         PaymentStrategy strategy = strategyFactory.getStrategy(paiement.getTypePaiement());
         strategy.rejectPayment(paiement);
-        return paiementRepository.save(paiement);
+        Paiement res =  paiementRepository.save(paiement);
+        return smartShopMapper.toPaiementDTO(res);
+    }
+
+    public List<Paiement> getAll() {
+        return paiementRepository.findAll();
     }
 }

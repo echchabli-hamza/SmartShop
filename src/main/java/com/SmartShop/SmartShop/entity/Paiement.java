@@ -22,7 +22,7 @@ public class Paiement {
     @JoinColumn(name = "commande_id")
     private Commande commande;
 
-    private Integer numeroPaiement;     // 1, 2, 3...
+    private Integer numeroPaiement;
 
     private Double montant;
 
