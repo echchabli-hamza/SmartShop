@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.service.helper;
 
 import com.SmartShop.SmartShop.entity.OrderItem;
 import com.SmartShop.SmartShop.entity.Product;
+import com.SmartShop.SmartShop.exception.BusinessException;
 import com.SmartShop.SmartShop.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -17,8 +18,7 @@ public class CheckStock {
             Product p = item.getProduct();
 
             if (p.getStockDisponible() < item.getQuantite()) {
-                throw new RuntimeException(
-                        "Stock insuffisant pour le produit: " + p.getNom() + " , ID : "+ p.getId()
+                throw new BusinessException("Stock insuffisant pour le produit : " + p.getNom() + " (ID : " + p.getId() + ")"
                 );
             }
         }

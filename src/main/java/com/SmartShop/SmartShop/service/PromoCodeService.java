@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.service;
 
 
 import com.SmartShop.SmartShop.entity.PromoCode;
+import com.SmartShop.SmartShop.exception.ResourceNotFoundException;
 import com.SmartShop.SmartShop.repository.PromoCodeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ public class PromoCodeService {
 
     public PromoCode getPromoCodeById(Long id) {
         return promoCodeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PromoCode not found: " + id));
+                .orElseThrow(() ->  new ResourceNotFoundException("PromoCode not found: " + id ));
     }
 
     @Transactional

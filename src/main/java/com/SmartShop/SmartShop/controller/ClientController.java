@@ -36,14 +36,14 @@ public class ClientController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ClientDTO> updateClient(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
-      //  authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+
         ClientDTO updatedClient = clientService.updateClient(id, clientDTO);
         return ResponseEntity.ok(updatedClient);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
-       // authHelper.checkAuthenticatedUserRole(session , UserRole.ADMIN);
+
         clientService.deleteClient(id);
         return ResponseEntity.noContent().build();
     }

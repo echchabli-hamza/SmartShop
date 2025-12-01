@@ -7,6 +7,8 @@ import com.SmartShop.SmartShop.dto.RegisterDto;
 import com.SmartShop.SmartShop.entity.*;
 import com.SmartShop.SmartShop.entity.enums.CustomerTier;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
+import com.SmartShop.SmartShop.exception.BusinessException;
+import com.SmartShop.SmartShop.exception.ResourceNotFoundException;
 import com.SmartShop.SmartShop.mapper.SmartShopMapper;
 import com.SmartShop.SmartShop.repository.*;
 
@@ -45,10 +47,11 @@ public class ClientService  {
     public ClientDTO createClient(RegisterDto registerDto) {
 
         if (userRepository.existsByUsername(registerDto.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new BusinessException("Username already exists" + registerDto.getUsername());
         }
         if (clientRepository.existsByEmail(registerDto.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new BusinessException("Email already exists" + registerDto.getEmail());
+
         }
 
 
@@ -74,7 +77,7 @@ public class ClientService  {
 
     public ClientDTO getClientById(Long id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
         return mapper.toClientDTO(client);
     }
 
@@ -89,7 +92,7 @@ public class ClientService  {
 
     public ClientDTO updateClient(Long id, ClientDTO clientDTO) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
+                .orElseThrow(() ->  new ResourceNotFoundException("Client not found with id: " + id));
 
 
         client.setNom(clientDTO.getNom());
@@ -102,7 +105,7 @@ public class ClientService  {
 
     public void deleteClient(Long id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
+                .orElseThrow(() ->   new ResourceNotFoundException("Client not found with id: " + id));
         clientRepository.delete(client);
     }
 

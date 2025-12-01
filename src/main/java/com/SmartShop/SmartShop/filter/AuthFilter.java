@@ -3,6 +3,7 @@ package com.SmartShop.SmartShop.filter;
 
 import com.SmartShop.SmartShop.entity.User;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
+import com.SmartShop.SmartShop.exception.ForbiddenException;
 import com.SmartShop.SmartShop.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -56,11 +57,6 @@ public class AuthFilter extends OncePerRequestFilter {
 
 
 
-        if (path.startsWith("/api/admin/clients/details")
-                && request.getMethod().equalsIgnoreCase("GET")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
 
         if (path.startsWith("/api/admin/")) {
@@ -73,19 +69,12 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
 
-        if (path.startsWith("/api/commandes")) {
-            if (user.getRole() != UserRole.ADMIN) {
-                sendError(response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: admin only");
-                return;
-            }
-            filterChain.doFilter(request, response);
-            return;
-        }
 
 
 
 
-        sendError(response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: endpoint not allowed");
+
+        throw new ForbiddenException("Forbidden: endpoint not allowed");
 
     }
 

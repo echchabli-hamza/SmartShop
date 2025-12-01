@@ -4,6 +4,7 @@ package com.SmartShop.SmartShop.service;
 
 import com.SmartShop.SmartShop.dto.ProductDTO;
 import com.SmartShop.SmartShop.entity.Product;
+import com.SmartShop.SmartShop.exception.ResourceNotFoundException;
 import com.SmartShop.SmartShop.helper.ProductSpecs;
 import com.SmartShop.SmartShop.mapper.SmartShopMapper;
 import com.SmartShop.SmartShop.repository.OrderItemRepository;
@@ -38,7 +39,7 @@ public class ProductService {
 
     public ProductDTO updateProduct(Long id, ProductDTO dto) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() ->  new ResourceNotFoundException("Payment not found with id : " +  id));
 
         product.setNom(dto.getNom());
         product.setPrixUnitaire(dto.getPrixUnitaire());
@@ -52,7 +53,7 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id : " +  id));
 
         boolean usedInOrders = orderItemRepository.existsByProductId(id);
 

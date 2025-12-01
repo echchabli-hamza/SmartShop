@@ -8,6 +8,8 @@ import com.SmartShop.SmartShop.entity.Commande;
 import com.SmartShop.SmartShop.entity.OrderItem;
 import com.SmartShop.SmartShop.entity.Product;
 import com.SmartShop.SmartShop.entity.enums.OrderStatus;
+import com.SmartShop.SmartShop.exception.BusinessException;
+import com.SmartShop.SmartShop.exception.ResourceNotFoundException;
 import com.SmartShop.SmartShop.mapper.SmartShopMapper;
 import com.SmartShop.SmartShop.repository.ClientRepository;
 import com.SmartShop.SmartShop.repository.CommandeRepository;
@@ -37,7 +39,8 @@ public class CommandeService {
     @Transactional
     public CommandeDTO createCommande(CommandeCreateRequest request) {
         Client client = clientRepository.findById(request.getClientId())
-                .orElseThrow(() -> new RuntimeException("Client not found: " + request.getClientId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found: " + request.getClientId()));
+
 
         Commande commande = new Commande();
         commande.setClient(client);
@@ -51,15 +54,16 @@ public class CommandeService {
         double sousTotal = 0;
         for (OrderItemRequest itemReq : request.getItems()) {
             Product product = productRepository.findById(itemReq.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found: " + itemReq.getProductId()));
+                    .orElseThrow(() ->  new ResourceNotFoundException("Product not found: " + request.getClientId()));
 
             if (product.getStockDisponible() < itemReq.getQuantity()) {
                 commande.setStatus(OrderStatus.REJECTED);
-                throw new RuntimeException("Insufficient stock for product: " + product.getNom());
+                throw new BusinessException("Insufficient stock for product: " + product.getNom());
+
             }
             if ( product.isDeleted()) {
                 commande.setStatus(OrderStatus.REJECTED);
-                throw new RuntimeException("Product is Deleted: " + product.getNom());
+                throw new BusinessException("Product is deleted: " + product.getNom());
             }
 
             OrderItem orderItem = new OrderItem();
@@ -94,21 +98,20 @@ public class CommandeService {
     @Transactional
     public CommandeDTO confirmCommande(Long commandeId) {
         Commande commande = commandeRepository.findById(commandeId)
-                .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found: " + commandeId));
+
 
         if (commande.getMontantRestant()!=0 ){
-            throw new RuntimeException("paiement not finished yet");
+            throw new BusinessException("Payment is not completed yet");
         }
         if (commande.getStatus().equals(OrderStatus.CANCELED)){
-            throw new RuntimeException("commande already canceled");
+            throw new BusinessException("Commande already canceled");
         }
         for (OrderItem item : commande.getItems()) {
             Product product = item.getProduct();
 
             if (product.getStockDisponible() < item.getQuantite()) {
-                throw new RuntimeException(
-                        "Insufficient stock for product: " + product.getNom()
-                );
+                throw new BusinessException("Insufficient stock for product: " + product.getNom());
             }
         }
 
@@ -136,20 +139,14 @@ public class CommandeService {
     public CommandeDTO cancelCommande(Long commandeId) {
 
         Commande commande = commandeRepository.findById(commandeId)
-                .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
+                .orElseThrow(() ->new ResourceNotFoundException("Commande not found: " + commandeId));
 
         OrderStatus oldStatus = commande.getStatus();
         if (oldStatus == OrderStatus.CONFIRMED){
-           throw new RuntimeException("command is already confirmed");
+            throw new BusinessException("command is already confirmed");
         }
 
-//        if (oldStatus == OrderStatus.PENDING) {
-//            for (OrderItem item : commande.getItems()) {
-//                Product product = item.getProduct();
-//                product.setStockDisponible(product.getStockDisponible() + item.getQuantite());
-//                productRepository.save(product);
-//            }
-//        }
+
 
 
             commande.getItems().clear();
@@ -167,11 +164,11 @@ public class CommandeService {
 
 
         Commande commande = commandeRepository.findById(commandeId)
-                .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found: " + commandeId));
 
         OrderStatus oldStatus = commande.getStatus();
         if (oldStatus == OrderStatus.CONFIRMED){
-            throw new RuntimeException("command is already confirmed");
+            throw new BusinessException("command is already confirmed");
         }
 
         commande.getItems().clear();
@@ -192,7 +189,7 @@ public class CommandeService {
     public CommandeDTO getCommandeById(Long commandeId) {
         return commandeRepository.findById(commandeId)
                 .map(mapper::toCommandeDTO)
-                .orElseThrow(() -> new RuntimeException("Commande not found: " + commandeId));
+                .orElseThrow(() -> new ResourceNotFoundException("Commande not found: " + commandeId));
     }
 
     public List<CommandeDTO> getAllCommandes() {

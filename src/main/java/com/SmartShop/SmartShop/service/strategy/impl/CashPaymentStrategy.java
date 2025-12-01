@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.service.strategy.impl;
 
 import com.SmartShop.SmartShop.entity.Paiement;
 import com.SmartShop.SmartShop.entity.enums.PaymentStatus;
+import com.SmartShop.SmartShop.exception.BusinessException;
 import com.SmartShop.SmartShop.service.strategy.PaymentStrategy;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public class CashPaymentStrategy implements PaymentStrategy {
 
 
         if (paiement.getMontant() > 20000) {
-            throw new RuntimeException("Cash payment exceeds legal limit!");
+            throw new BusinessException("Cash payment exceeds legal limit!");
         }
 
         paiement.setReference(null);
