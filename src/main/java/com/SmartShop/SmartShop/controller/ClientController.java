@@ -6,6 +6,7 @@ import com.SmartShop.SmartShop.entity.enums.UserRole;
 
 import com.SmartShop.SmartShop.service.ClientService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ public class ClientController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ClientDTO> registerClient(@RequestBody RegisterDto registerDto  ) {
+    public ResponseEntity<ClientDTO> registerClient(@Valid @RequestBody RegisterDto registerDto  ) {
 
         ClientDTO clientDTO = clientService.createClient(registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(clientDTO);

@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.controller;
 
 import com.SmartShop.SmartShop.dto.PaiementDTO;
 import com.SmartShop.SmartShop.service.PaymentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +18,7 @@ public class PaymentController {
 
 
     @PostMapping
-    public ResponseEntity<PaiementDTO> addPayment(@RequestBody PaiementDTO dto) {
+    public ResponseEntity<PaiementDTO> addPayment(@Valid  @RequestBody PaiementDTO dto) {
         PaiementDTO saved = paymentService.addPayment(dto);
         return ResponseEntity.ok(saved);
     }

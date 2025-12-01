@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.controller;
 
 import com.SmartShop.SmartShop.dto.ProductDTO;
 import com.SmartShop.SmartShop.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ProductController {
 
 
     @PostMapping
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO dto) {
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO dto) {
         return ResponseEntity.ok(productService.addProduct(dto));
     }
 

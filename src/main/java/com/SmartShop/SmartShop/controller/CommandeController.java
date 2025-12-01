@@ -5,6 +5,7 @@ package com.SmartShop.SmartShop.controller;
 import com.SmartShop.SmartShop.dto.CommandeCreateRequest;
 import com.SmartShop.SmartShop.dto.CommandeDTO;
 import com.SmartShop.SmartShop.service.CommandeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CommandeController {
     private final CommandeService commandeService;
 
     @PostMapping
-    public CommandeDTO createCommande(@RequestBody CommandeCreateRequest request) {
+    public CommandeDTO createCommande(@Valid  @RequestBody CommandeCreateRequest request) {
         return commandeService.createCommande(request);
     }
 
