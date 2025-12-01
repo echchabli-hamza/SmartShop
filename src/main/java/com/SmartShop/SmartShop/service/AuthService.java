@@ -1,7 +1,7 @@
 package com.SmartShop.SmartShop.service;
 
 
-import com.SmartShop.SmartShop.dto.SessionResponse;
+
 import com.SmartShop.SmartShop.entity.User;
 import com.SmartShop.SmartShop.exception.ResourceNotFoundException;
 import com.SmartShop.SmartShop.repository.UserRepository;

@@ -3,10 +3,11 @@ package com.SmartShop.SmartShop.dto;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
-@AllArgsConstructor
-public class SessionResponse {
-    private String username;
-    private UserRole role;
+@Setter
+public class Stat {
+    private int CommansCount;
+    private double moantCumule;
 }

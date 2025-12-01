@@ -4,7 +4,6 @@ package com.SmartShop.SmartShop.controller;
 
 
 import com.SmartShop.SmartShop.dto.LoginRequestDto;
-import com.SmartShop.SmartShop.dto.SessionResponse;
 import com.SmartShop.SmartShop.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

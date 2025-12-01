@@ -3,7 +3,9 @@ package com.SmartShop.SmartShop.service;
 
 
 import com.SmartShop.SmartShop.dto.ClientDTO;
+import com.SmartShop.SmartShop.dto.CommandeDTO;
 import com.SmartShop.SmartShop.dto.RegisterDto;
+import com.SmartShop.SmartShop.dto.Stat;
 import com.SmartShop.SmartShop.entity.*;
 import com.SmartShop.SmartShop.entity.enums.CustomerTier;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
@@ -15,6 +17,7 @@ import com.SmartShop.SmartShop.repository.*;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -110,8 +113,32 @@ public class ClientService  {
     }
 
 
+    public  ClientDTO getClientByUserId(Long id) {
+
+        return mapper.toClientDTO(clientRepository.findByUserId(id).get());
+
+    }
+
+    public List<CommandeDTO> getClientC(Long id){
+
+        Client c =clientRepository.findByUserId(id).get();
+        return c.getCommandes().stream().map(mapper::toCommandeDTO).toList();
+
+    }
+    public Stat getClientStat(Long id){
+
+        Client c =clientRepository.findByUserId(id).get();
+        Stat s = new Stat();
+       int count = (int)c.getCommandes().stream().count();
+       double d =c.getCommandes().stream().mapToDouble(Commande::getTotal).sum();
+
+        s.setCommansCount(count);
+        s.setMoantCumule(d);
+
+        return s;
 
 
+    }
 
 }
 
