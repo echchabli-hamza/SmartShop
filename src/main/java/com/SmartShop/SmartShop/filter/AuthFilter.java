@@ -1,19 +1,18 @@
 package com.SmartShop.SmartShop.filter;
 
-
 import com.SmartShop.SmartShop.entity.User;
 import com.SmartShop.SmartShop.entity.enums.UserRole;
-import com.SmartShop.SmartShop.exception.ForbiddenException;
 import com.SmartShop.SmartShop.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.*;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 public class AuthFilter extends OncePerRequestFilter {
@@ -31,7 +30,7 @@ public class AuthFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // Public endpoints
+
         if (path.startsWith("/auth/")) {
             filterChain.doFilter(request, response);
             return;
@@ -39,29 +38,35 @@ public class AuthFilter extends OncePerRequestFilter {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("username") == null) {
-            sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: no user in session");
+            sendError(request,response, HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: no user in session");
             return;
         }
 
         String username = (String) session.getAttribute("username");
-        User user = userRepository.findByUsername(username)
-                .orElse(null);
+        User user = userRepository.findByUsername(username).orElse(null);
 
         if (user == null) {
-            sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            sendError(request,response, HttpServletResponse.SC_UNAUTHORIZED, "User not found");
             return;
         }
+
 
         request.setAttribute("authenticatedUser", user);
 
 
-
-
-
-
         if (path.startsWith("/api/admin/")) {
             if (user.getRole() != UserRole.ADMIN) {
-                sendError(response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: admin only");
+                sendError( request, response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: admin only");
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        if (path.startsWith("/api/client/")) {
+            if (user.getRole() != UserRole.CLIENT) {
+                sendError( request, response, HttpServletResponse.SC_FORBIDDEN, "Forbidden: client only");
                 return;
             }
             filterChain.doFilter(request, response);
@@ -72,16 +77,19 @@ public class AuthFilter extends OncePerRequestFilter {
 
 
 
-
-
-        throw new ForbiddenException("Forbidden: endpoint not allowed");
-
+        sendError( request,response, HttpServletResponse.SC_NOT_FOUND, "Endpoint not found");
     }
 
-    private void sendError(HttpServletResponse response, int status, String message) throws IOException {
+    private void sendError(HttpServletRequest request,HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\":\"" + message + "\"}");
+        String json = "{"
+                + "\"timestamp\":\"" + LocalDateTime.now() + "\","
+                + "\"status\":" + status + ","
+                + "\"message\":\"" + message + "\","
+                + "\"path\":\"" + request.getRequestURI() + "\""
+                + "}";
+
+        response.getWriter().write(json);
     }
 }
-

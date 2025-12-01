@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
 
         return buildError(HttpStatus.BAD_REQUEST, "Validation Error", message, request.getRequestURI());
     }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(NoHandlerFoundException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.NOT_FOUND, "Not Found", "The requested endpoint does not exist", request.getRequestURI());
+    }
+
 
 
 
