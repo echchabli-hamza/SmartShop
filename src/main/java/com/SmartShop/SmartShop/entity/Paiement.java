@@ -4,6 +4,7 @@ package com.SmartShop.SmartShop.entity;
 
 import com.SmartShop.SmartShop.entity.enums.PaymentStatus;
 import com.SmartShop.SmartShop.entity.enums.PaymentType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Paiement {
 
     @ManyToOne
     @JoinColumn(name = "commande_id")
+    @JsonBackReference
     private Commande commande;
 
     private Integer numeroPaiement;

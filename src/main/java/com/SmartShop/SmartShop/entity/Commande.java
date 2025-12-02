@@ -5,6 +5,7 @@ package com.SmartShop.SmartShop.entity;
 
 
 import com.SmartShop.SmartShop.entity.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class Commande {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
+    @JsonManagedReference
     private Client client;
 
     private LocalDateTime date;

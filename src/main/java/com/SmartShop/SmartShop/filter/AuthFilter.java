@@ -29,7 +29,10 @@ public class AuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String path = request.getRequestURI();
-
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response); // allow access
+            return;
+        }
 
         if (path.startsWith("/auth/")) {
             filterChain.doFilter(request, response);

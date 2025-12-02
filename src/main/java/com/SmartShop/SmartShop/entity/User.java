@@ -2,6 +2,7 @@ package com.SmartShop.SmartShop.entity;
 
 
 import com.SmartShop.SmartShop.entity.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,5 +25,6 @@ public class User {
     private UserRole role;
 
     @OneToOne(mappedBy = "user")
+    @JsonBackReference
     private Client client;
 }

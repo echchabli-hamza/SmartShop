@@ -3,6 +3,7 @@ package com.SmartShop.SmartShop.entity;
 
 
 import com.SmartShop.SmartShop.entity.enums.CustomerTier;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,6 @@ public class Client {
     private User user;
 
     @OneToMany(mappedBy = "client")
+    @JsonBackReference
     private List<Commande> commandes;
 }
